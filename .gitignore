@@ -120,3 +120,5 @@ ehthumbs.db
 
 # Custom files and directories to ignore
 # Add any additional files and directories you want to ignore in your project.
+*.csv
+*.pkl
