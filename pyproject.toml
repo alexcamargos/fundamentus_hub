@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "Fundamentus Hub"
 version = "0.0.1"
-description = ""
+description = "Este projeto cria um dashboard utilizando a API pyfundamentus para exibir os principais indicadores financeiros das empresas listadas na B3, facilitando a análise fundamentalista através de visualizações claras e acessíveis para investidores e analistas."
 authors = ["Alexsander Lopes Camargos <alexcamargos@gmail.com>"]
 license = "MIT License"
 readme = "README.md"
