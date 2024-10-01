@@ -15,3 +15,22 @@
 #
 #  License: MIT
 #  ------------------------------------------------------------------------------
+
+import streamlit as st
+
+from fundamentus_hub.dashboard.index import dasboard_index
+from fundamentus_hub.dashboard.footer import dasboard_footer
+from fundamentus_hub.utilities.configuration import StreamlitConfiguration as StreamlitCfg
+
+
+if __name__ == '__main__':
+
+    st.set_page_config(**StreamlitCfg.PAGE_CONFIG.value)
+
+    st.title(StreamlitCfg.TITLE.value)
+
+    st.write(StreamlitCfg.DESCRIPTION.value)
+
+    dasboard_index()
+
+    dasboard_footer()
