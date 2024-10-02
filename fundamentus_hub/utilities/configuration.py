@@ -34,12 +34,25 @@ class StreamlitConfiguration(Enum):
 
 
 class SGSAPIConfiguration(Enum):
-    """Configuration class"""
+    """Configuration for 'Sistema Gerenciador de Séries Temporais do Banco Central'."""
 
-    # BCData API URL
-    TAXA_SELIC = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json'
-    IPCA = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json'
-    IGPM = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.189/dados?formato=json'
-    DOLAR = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados?formato=json'
-    EURO = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.21619/dados?formato=json'
-    PIB = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.7326/dados?formato=json'
+    # SGS API URL.
+    API = 'http://api.bcb.gov.br/dados/serie/bcdata.sgs.{}/dados?formato={}'
+    # API response format.
+    RESPONSE_FORMAT = 'json'
+    # 432 - Taxa de juros - Meta Selic definida pelo Copom.
+    TAXA_SELIC = API.format(432, RESPONSE_FORMAT)
+    # 4389 - Taxa de juros - CDI anualizada base 252.
+    CDI = API.format(4389, RESPONSE_FORMAT)
+    # 13521 - Meta para a inflação.
+    META_INFLACAO = API.format(13521, RESPONSE_FORMAT)
+    # 433 - Índice nacional de preços ao consumidor-amplo (IPCA).
+    IPCA = API.format(433, RESPONSE_FORMAT)
+    # 189 - Índice geral de preços do mercado (IGP-M)
+    IGPM = API.format(189, RESPONSE_FORMAT)
+    # 1 - Taxa de câmbio - Livre - Dólar americano (venda) - diário.
+    DOLAR = API.format(1, RESPONSE_FORMAT)
+    # 21619	Taxa de câmbio - Livre - Euro (venda).
+    EURO = API.format(21619, RESPONSE_FORMAT)
+    # 7326 - Produto Interno Bruto - Taxa de variação real no ano
+    PIB = API.format(7326, RESPONSE_FORMAT)
