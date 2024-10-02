@@ -17,8 +17,9 @@
 # ------------------------------------------------------------------------------
 """HTTP Requester - This module is responsible for making HTTP requests."""
 
+from typing import Dict
+
 import requests
-import streamlit as st
 
 from fundamentus_hub.downloader.interfaces.requester import RequesterInterface
 
@@ -30,8 +31,8 @@ class SGSRequester(RequesterInterface):
     def __init__(self, url: str) -> None:
         """Initialize the class.
 
-        :param url: str: URL to make the request.
-        :param params: dict: Parameters to make the request.
+        Arguments:
+            url {str} -- URL to make the request.
         """
 
         self.__url = url
@@ -44,9 +45,14 @@ class SGSRequester(RequesterInterface):
     def __send_http_request(prepared_request: requests.PreparedRequest) -> requests.Response:
         """Send the HTTP request.
 
-        :param prepared_request: requests.PreparedRequest: Prepared request.
-        :return: requests.Response: Response of the request.
-        :raises HTTPError: If the request fails.
+        Arguments:
+            prepared_request {requests.PreparedRequest} -- Prepared request.
+
+        Returns:
+            requests.Response -- Response of the request.
+
+        Raises:
+            HTTPError: If the request fails.
         """
 
         with requests.Session() as session:
@@ -56,11 +62,14 @@ class SGSRequester(RequesterInterface):
 
             return response
 
-    def make_request(self):
+    def make_request(self) -> Dict:
         """Make request to the url and return the response.
 
-        :return: dict: Response of the request.
-        :raises RequestException: If the request fails.
+        Returns:
+            Dict -- Response of the request.
+
+        Raises:
+            RequestException: If the request fails.
         """
 
         try:
