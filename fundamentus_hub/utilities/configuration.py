@@ -33,7 +33,7 @@ class StreamlitConfiguration(Enum):
     DESCRIPTION = 'Este projeto cria um dashboard utilizando a API pyfundamentus para exibir os principais indicadores financeiros das empresas listadas na B3, facilitando a análise fundamentalista através de visualizações claras e acessíveis para investidores e analistas.'
 
 
-class BCDataAPIConfiguration(Enum):
+class SGSAPIConfiguration(Enum):
     """Configuration class"""
 
     # BCData API URL
@@ -42,4 +42,4 @@ class BCDataAPIConfiguration(Enum):
     IGPM = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.189/dados?formato=json'
     DOLAR = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados?formato=json'
     EURO = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.21619/dados?formato=json'
-    PIP = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.7326/dados?formato=json'
+    PIB = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.7326/dados?formato=json'
