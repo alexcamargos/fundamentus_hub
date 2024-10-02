@@ -19,47 +19,68 @@
 import pandas as pd
 import streamlit as st
 
-from fundamentus_hub.utilities.configuration import BCDataAPIConfiguration as BCDataAPICfg
+from fundamentus_hub.utilities.configuration import SGSAPIConfiguration as SGSCfg
+from fundamentus_hub.downloader.requester import SGSRequester
 
 
-@st.cache_data
-def get_sgs_data(url: str) -> float:
-    '''Get data from API'''
+@st.cache_data(ttl=3600)
+def extract_sgs_data(data) -> float:
+    """Extract data from the SGS API and return the last value."""
 
-    data_frame = pd.read_json(url)
-    index = data_frame.set_index('data')
-    value = index['valor']
+    data_frame = pd.DataFrame(data)
+    data_frame = data_frame.set_index('data')
+    values = data_frame['valor']
 
-    return value[-1]
+    return float(values.iloc[-1])
 
 
 def dasboard_index():
-    with st.spinner('Baixando Informações...'):
-        # Obtém a taxa Selic a partir da URL e processa os dados
+    """Dashboard index page."""
+
+    st.subheader('Indicadores Econômicos')
+
+    with st.spinner('Acessando o Sistema Gerenciador de Séries Temporais do Banco Central...'):
+        selic_api = SGSRequester(SGSCfg.TAXA_SELIC.value)
+        selic_value = extract_sgs_data(selic_api.make_request())
+
+        dolar_api = SGSRequester(SGSCfg.DOLAR.value)
+        dolar_value = extract_sgs_data(dolar_api.make_request())
+
+        euro_api = SGSRequester(SGSCfg.EURO.value)
+        euro_value = extract_sgs_data(euro_api.make_request())
+
+        ipca_api = SGSRequester(SGSCfg.IPCA.value)
+        ipca_value = extract_sgs_data(ipca_api.make_request())
+
+        igpm_api = SGSRequester(SGSCfg.IGPM.value)
+        igpm_value = extract_sgs_data(igpm_api.make_request())
+
+        pib_api = SGSRequester(SGSCfg.PIB.value)
+        pib_value = extract_sgs_data(pib_api.make_request())
+
         indicators = {
             'Taxa Selic': {
                 'label': ':green[Taxa Selic]',
-                'value': f'{get_sgs_data(BCDataAPICfg.TAXA_SELIC.value)}%'},
+                'value': f'{selic_value:.2f}%'},
             'Dólar': {
                 'label': ':green[Dólar]',
-                'value': f'R${get_sgs_data(BCDataAPICfg.DOLAR.value):.2f}'},
+                'value': f'R${dolar_value:.2f}'},
             'Euro': {
                 'label': ':green[Euro]',
-                'value': f'R${get_sgs_data(BCDataAPICfg.EURO.value):.2f}'},
+                'value': f'R${euro_value:.2f}'},
             'IPCA': {
                 'label': ':green[IPCA]',
-                'value': f'{get_sgs_data(BCDataAPICfg.IPCA.value)}%'},
+                'value': f'{ipca_value:.2f}%'},
             'IGPM': {
                 'label': ':green[IGPM]',
-                'value': f'{get_sgs_data(BCDataAPICfg.IGPM.value)}%'},
+                'value': f'{igpm_value:.2f}%'},
             'PIB': {
                 'label': ':green[PIB]',
-                'value': f'{get_sgs_data(BCDataAPICfg.PIP.value)}%'}
+                'value': f'{pib_value:.2f}%'}
         }
 
         # Criando colunas dinamicamente de acordo com o número de indicadores
         columns = st.columns(len(indicators))
-
         # Preenchendo cada coluna com o rótulo e valor configuráveis
-        for column, (key, data) in zip(columns, indicators.items()):
+        for column, (_, data) in zip(columns, indicators.items()):
             column.metric(label=data['label'], value=data['value'])
