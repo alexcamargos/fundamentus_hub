@@ -16,13 +16,9 @@
 #  License: MIT
 #  ------------------------------------------------------------------------------
 
-import pandas as pd
-import streamlit as st
+"""Dashboard index page."""
 
 from fundamentus_hub.dashboard.indicator import create_indicator_metrics
-from fundamentus_hub.downloader.requester import SGSRequester
-from fundamentus_hub.utilities.configuration import \
-    SGSAPIConfiguration as SGSCfg
 
 
 def dasboard_index():

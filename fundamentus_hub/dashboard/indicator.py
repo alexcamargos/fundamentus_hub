@@ -24,15 +24,11 @@ from fundamentus_hub.utilities.configuration import \
     SGSAPIConfiguration as SGSCfg
 
 
-@st.cache_data(ttl=3600)
-def extract_sgs_value(data) -> float:
+@st.cache_data(ttl=3600, show_spinner=False)
+def extract_sgs_value(data) -> pd.DataFrame:
     """Extract data from the SGS API and return the last value."""
 
-    data_frame = pd.DataFrame(data)
-    data_frame = data_frame.set_index('data')
-    values = data_frame['valor']
-
-    return float(values.iloc[-1])
+    return pd.DataFrame(data).set_index('data')
 
 
 def format_value(raw_value: float, output_format: str) -> str:
@@ -62,7 +58,7 @@ def create_indicator_metrics():
     """Create the indicator metrics."""
 
     # Initialize the requester interface.
-    request = SGSRequester()
+    requester = SGSRequester()
 
     st.subheader('Indicadores Econômicos')
 
@@ -80,7 +76,8 @@ def create_indicator_metrics():
 
         # Distribui os indicadores entre as colunas
         for index, indicator in enumerate(indicators):
-            raw_value = extract_sgs_value(request.make_request(indicator.value['url']))
+            response = extract_sgs_value(requester.make_request(indicator.value['url']))
+            raw_value = float(response['valor'].iloc[-1])  # pylint: disable=unsubscriptable-object
             formatted_value = format_value(raw_value,
                                            indicator.value.get('output_format',
                                                                'default'))
