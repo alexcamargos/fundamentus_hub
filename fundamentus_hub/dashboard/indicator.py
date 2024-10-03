@@ -24,7 +24,7 @@ from fundamentus_hub.utilities.configuration import \
     SGSAPIConfiguration as SGSCfg
 
 
-@st.cache_data(ttl=3600, suppress_st_warning=True)
+@st.cache_data(ttl=3600)
 def extract_sgs_value(data) -> float:
     """Extract data from the SGS API and return the last value."""
 
@@ -61,6 +61,9 @@ def format_value(raw_value: float, output_format: str) -> str:
 def create_indicator_metrics():
     """Create the indicator metrics."""
 
+    # Initialize the requester interface.
+    request = SGSRequester()
+
     st.subheader('Indicadores Econômicos')
 
     with st.spinner('Acessando o Sistema Gerenciador de Séries Temporais do Banco Central...'):
@@ -77,9 +80,10 @@ def create_indicator_metrics():
 
         # Distribui os indicadores entre as colunas
         for index, indicator in enumerate(indicators):
-            raw_value = extract_sgs_value(SGSRequester(indicator.value['url']).make_request())
-            formatted_value = format_value(raw_value, indicator.value.get('output_format',
-                                                                          'default'))
+            raw_value = extract_sgs_value(request.make_request(indicator.value['url']))
+            formatted_value = format_value(raw_value,
+                                           indicator.value.get('output_format',
+                                                               'default'))
 
             with columns[index]:
                 st.metric(value=formatted_value,

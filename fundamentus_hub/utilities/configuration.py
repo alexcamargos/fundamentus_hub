@@ -95,7 +95,7 @@ class SGSAPIConfiguration(Enum):
     PIB = {'url': __API.format(7326, __RESPONSE_FORMAT),
            'label': ':green[PIB]',
            'help': 'Produto Interno Bruto - Taxa de variação real no ano.',
-           'output_format': 'percent'}
+           'output_format': 'percent_aa'}
     # 13521 - Meta para a inflação.
     META_INFLACAO = {'url': __API.format(13521, __RESPONSE_FORMAT),
                      'label': ':green[Meta Inflação]',

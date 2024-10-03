@@ -27,7 +27,7 @@ class RequesterInterface(ABC):
     """Represents a complete HTTP request."""
 
     @abstractmethod
-    def make_request(self) -> Dict:
+    def make_request(self, url: str) -> Dict:
         """Make request to the url and return the response."""
 
         raise NotImplementedError("You should implement this method.")

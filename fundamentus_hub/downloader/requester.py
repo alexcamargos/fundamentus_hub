@@ -28,14 +28,9 @@ from fundamentus_hub.downloader.interfaces.requester import RequesterInterface
 class SGSRequester(RequesterInterface):
     """Represents a complete HTTP request."""
 
-    def __init__(self, url: str) -> None:
-        """Initialize the class.
+    def __init__(self) -> None:
+        """Initialize the class."""
 
-        Arguments:
-            url {str} -- URL to make the request.
-        """
-
-        self.__url = url
         self.__headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
             '(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
@@ -62,7 +57,7 @@ class SGSRequester(RequesterInterface):
 
             return response
 
-    def make_request(self) -> Dict:
+    def make_request(self, url: str) -> Dict:
         """Make request to the url and return the response.
 
         Returns:
@@ -74,7 +69,7 @@ class SGSRequester(RequesterInterface):
 
         try:
             request = requests.Request(method="GET",
-                                       url=self.__url,
+                                       url=url,
                                        headers=self.__headers)
 
             prepared_request = request.prepare()
