@@ -19,12 +19,13 @@
 import pandas as pd
 import streamlit as st
 
-from fundamentus_hub.utilities.configuration import SGSAPIConfiguration as SGSCfg
 from fundamentus_hub.downloader.requester import SGSRequester
+from fundamentus_hub.utilities.configuration import \
+    SGSAPIConfiguration as SGSCfg
 
 
 @st.cache_data(ttl=3600)
-def extract_sgs_data(data) -> float:
+def extract_sgs_value(data) -> float:
     """Extract data from the SGS API and return the last value."""
 
     data_frame = pd.DataFrame(data)
@@ -34,53 +35,56 @@ def extract_sgs_data(data) -> float:
     return float(values.iloc[-1])
 
 
-def dasboard_index():
-    """Dashboard index page."""
+def format_value(raw_value: float, output_format: str) -> str:
+    """Format the value according to the output format.
+
+    Arguments:
+        raw_value (float) -- The raw value to be formatted.
+        output_format (str) -- The output format.
+
+    Returns:
+        The formatted value.
+    """
+
+    if output_format == 'percent':
+        return f'{raw_value:.2f}%'
+
+    if output_format == 'currency':
+        return f'R${raw_value:,.2f}'
+
+    return f'{raw_value:.2f}'
+
+
+def __create_indicator_metrics():
+    """Create the indicator metrics."""
 
     st.subheader('Indicadores Econômicos')
 
     with st.spinner('Acessando o Sistema Gerenciador de Séries Temporais do Banco Central...'):
-        selic_api = SGSRequester(SGSCfg.TAXA_SELIC.value)
-        selic_value = extract_sgs_data(selic_api.make_request())
+        # Obter os itens do Enum que são dicionários
+        indicators = [indicator for indicator in SGSCfg if isinstance(indicator.value,
+                                                                      dict)]
 
-        dolar_api = SGSRequester(SGSCfg.DOLAR.value)
-        dolar_value = extract_sgs_data(dolar_api.make_request())
+        # Determinar o número de colunas por linha (divide por 2)
+        num_indicators = len(indicators)
+        num_columns = (num_indicators + 1) // 2  # Número de colunas por linha
 
-        euro_api = SGSRequester(SGSCfg.EURO.value)
-        euro_value = extract_sgs_data(euro_api.make_request())
+        # Cria as colunas para as duas linhas
+        columns = st.columns(num_columns) + st.columns(num_columns)
 
-        ipca_api = SGSRequester(SGSCfg.IPCA.value)
-        ipca_value = extract_sgs_data(ipca_api.make_request())
+        # Distribui os indicadores entre as colunas
+        for index, indicator in enumerate(indicators):
+            raw_value = extract_sgs_value(SGSRequester(indicator.value['url']).make_request())
+            formatted_value = format_value(raw_value, indicator.value.get('output_format',
+                                                                          'default'))
 
-        igpm_api = SGSRequester(SGSCfg.IGPM.value)
-        igpm_value = extract_sgs_data(igpm_api.make_request())
+            with columns[index]:
+                st.metric(value=formatted_value,
+                          label=indicator.value['label'],
+                          help=indicator.value['help'])
 
-        pib_api = SGSRequester(SGSCfg.PIB.value)
-        pib_value = extract_sgs_data(pib_api.make_request())
 
-        indicators = {
-            'Taxa Selic': {
-                'label': ':green[Taxa Selic]',
-                'value': f'{selic_value:.2f}%'},
-            'Dólar': {
-                'label': ':green[Dólar]',
-                'value': f'R${dolar_value:.2f}'},
-            'Euro': {
-                'label': ':green[Euro]',
-                'value': f'R${euro_value:.2f}'},
-            'IPCA': {
-                'label': ':green[IPCA]',
-                'value': f'{ipca_value:.2f}%'},
-            'IGPM': {
-                'label': ':green[IGPM]',
-                'value': f'{igpm_value:.2f}%'},
-            'PIB': {
-                'label': ':green[PIB]',
-                'value': f'{pib_value:.2f}%'}
-        }
+def dasboard_index():
+    """Dashboard index page."""
 
-        # Criando colunas dinamicamente de acordo com o número de indicadores
-        columns = st.columns(len(indicators))
-        # Preenchendo cada coluna com o rótulo e valor configuráveis
-        for column, (_, data) in zip(columns, indicators.items()):
-            column.metric(label=data['label'], value=data['value'])
+    __create_indicator_metrics()
