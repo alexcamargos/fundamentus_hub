@@ -101,3 +101,9 @@ class SGSAPIConfiguration(Enum):
                      'label': ':green[Meta Inflação]',
                      'help': 'Meta para a inflação.',
                      'output_format': 'percent_aa'}
+
+
+class DownloadHandler(Enum):
+    DATA_PATH = 'data//'
+    DATA_FILE = 'fundamentus_data'
+    DATA_FORMAT = 'csv'
