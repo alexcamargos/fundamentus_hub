@@ -2,7 +2,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Fundamentus Hub",
+            "name": "Download Data",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "args": ["-d"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Dashboard",
             "type": "debugpy",
             "request": "launch",
             "module": "streamlit",
