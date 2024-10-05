@@ -24,7 +24,7 @@ from typing import Dict
 from pandas import DataFrame
 
 
-class StockFecherInterface(ABC):
+class StockFetcherInterface(ABC):
     """Represents a stock fetcher."""
 
     @abstractmethod
