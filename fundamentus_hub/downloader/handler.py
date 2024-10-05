@@ -22,7 +22,7 @@ import pickle
 
 import fundamentus.exceptions.http_request_error
 import pandas as pd
-import loguru as logger
+from loguru import logger
 
 from fundamentus_hub.downloader.interfaces.handler import (DataPersisterInterface,
                                                            DataProcessorInterface,
