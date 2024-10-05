@@ -91,7 +91,7 @@ def main_streamlit_app(portfolio: list) -> None:
 
     st.write(StreamlitCfg.DESCRIPTION.value)
 
-    dasboard_index()
+    dasboard_index(portfolio)
 
     dasboard_footer()
 
