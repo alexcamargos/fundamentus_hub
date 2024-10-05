@@ -20,28 +20,28 @@ import concurrent.futures
 import datetime
 import pickle
 
-import fundamentus.exceptions.http_request_error
 import pandas as pd
+from fundamentus import Pipeline
+from fundamentus.exceptions.extract_exception import ExtractException
+from fundamentus.exceptions.http_request_error import HttpRequestError
 from loguru import logger
 
 from fundamentus_hub.downloader.interfaces.handler import (DataPersisterInterface,
                                                            DataProcessorInterface,
-                                                           StockFecherInterface)
+                                                           StockFetcherInterface)
+from fundamentus_hub.utilities.configuration import DownloadHandler as DownloadCfg
 
 
-class StockFecher(StockFecherInterface):
+class StockFetcher(StockFetcherInterface):
     """Stock Fetcher class"""
-
-    def __init__(self, api_client) -> None:
-        self.__api_client = api_client
 
     def get_all_tickets(self) -> list:
         """Get all tickets from pyfundamentus API"""
 
         # Get all companies from pyfundamentus API.
-        response = self.__api_client.list_all_companies()
+        response = Pipeline().list_all_companies()
 
-        return [ticket['code'] for ticket in response]
+        return [ticket['code'] for ticket in response.transformed_information]
 
     def get_data(self, ticket: str) -> list:
         """Get data from pyfundamentus API"""
@@ -49,10 +49,10 @@ class StockFecher(StockFecherInterface):
         # Get data from pyfundamentus API.
         try:
             logger.info(f'Getting data from {ticket}')
-            fundamentus_response = self.__api_client.Pipeline(ticket).get_all_information()
+            fundamentus_response = Pipeline(ticket).get_all_information()
 
             return fundamentus_response
-        except fundamentus.exceptions.http_request_error.HttpRequestError as error:
+        except HttpRequestError as error:
             logger.error(f'Error getting data from {ticket}')
             logger.error(f'Error: {error}')
 
@@ -101,7 +101,7 @@ class DataPersister(DataPersisterInterface):
     @staticmethod
     def persist_fundamentus_data(data_frame: pd.DataFrame,
                                  file_name: str,
-                                 file_format: str = 'pkl') -> None:
+                                 file_format: str = 'csv') -> None:
         """Persist data to a file"""
 
         today = datetime.date.today().strftime("%d-%m-%Y")
@@ -109,10 +109,10 @@ class DataPersister(DataPersisterInterface):
         logger.info(f'Persisting data to {file_name}_{today}.{file_format}')
 
         if file_format == 'pkl':
-            with open(f'{file_name}_{today}.pkl', 'wb') as file:
+            with open(f'{DownloadCfg.DATA_PATH.value}{file_name}_{today}.pkl', 'wb') as file:
                 pickle.dump(data_frame, file)
         elif file_format == 'csv':
-            data_frame.to_csv(f'{file_name}_{today}.csv',
+            data_frame.to_csv(f'{DownloadCfg.DATA_PATH.value}{file_name}_{today}.csv',
                               index=False,
                               sep=';',
                               encoding='utf-8')
@@ -123,7 +123,7 @@ class DownloadHandler:
     """Download Handler class"""
 
     def __init__(self,
-                 fetcher: StockFecher,
+                 fetcher: StockFetcher,
                  processor: DataProcessor,
                  persister: DataPersister) -> None:
         self.__fetcher = fetcher
@@ -140,32 +140,43 @@ class DownloadHandler:
                                   portfolio: list) -> tuple:
         """Create a ThreadPoolExecutor to get data from pyfundamentus API"""
 
+        if not portfolio:
+            portfolio = self.__fetcher.get_all_tickets()
+
         tickets_data = []
         tickets_error = []
 
         # Create a ThreadPoolExecutor
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Submit the tasks to the executor
-            futures = [executor.submit(self.__fetcher.extract_information, ticket) for ticket in portfolio]
+            futures = [executor.submit(self.__fetcher.get_data, ticket) for ticket in portfolio]
 
             # Retrieve the results as they become available
             for future in concurrent.futures.as_completed(futures):
-                response = future.result()
-                if response is not None:
-                    tickets_data.append(response)
-                else:
-                    tickets_error.append(response)
+                try:
+                    # Raises exception if an error occurred.
+                    response = future.result()
+                    if response is not None:
+                        tickets_data.append(response)
+                    else:
+                        tickets_error.append(response)
+                except ExtractException:
+                    continue
 
         return tickets_data, tickets_error
 
     def run(self,
             portfolio: list,
             output_file: str,
-            file_format: str = 'csv') -> None:
+            file_format: str = 'csv',
+            show_tickets_error: bool = 'True') -> None:
         """Run the download handler"""
 
         # Step 1: Fetch data from pyfundamentus API.
         fundamentus_data, tickets_error = self.__fetch_data_concurrently(portfolio)
+
+        if show_tickets_error:
+            self.__log_error(tickets_error)
 
         # Step 2: Process the data.
         processed_data = [self.__processor.process_information(data) for data in fundamentus_data]
