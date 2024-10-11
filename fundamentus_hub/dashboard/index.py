@@ -23,7 +23,11 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from fundamentus_hub.dashboard.indicator import create_indicator_metrics
+from fundamentus_hub.dashboard.widgets.indicator_metrics import create_indicator_metrics
+from fundamentus_hub.dashboard.widgets.stock_indicators import (
+    show_balance_sheet, show_income_statement, show_indebtedness_indicators,
+    show_market_indicators, show_oscillations, show_profitability_indicators,
+    show_valuation_indicators)
 from fundamentus_hub.utilities.configuration import DownloadHandler as DownloadCfg
 
 
@@ -53,10 +57,34 @@ def load_and_filter_portfolio(_portfolio: list) -> pd.DataFrame:
 def dasboard_index(portfolio: list) -> None:
     """Dashboard index page."""
 
-    create_indicator_metrics()
+    with st.container():
+        create_indicator_metrics()
 
     with st.spinner('Carregando dados...'):
         oldest_df, youngest_df = load_and_filter_portfolio(portfolio)
 
-        st.dataframe(oldest_df)
-        st.dataframe(youngest_df)
+    data = youngest_df.iloc[0]
+
+    with st.container():
+        st.subheader(f'{data["Código"]} - {data["Empresa"]}')
+
+        with st.expander('Indicadores de Mercado', expanded=True):
+            show_market_indicators(data)
+
+        with st.expander('Oscilações', expanded=True):
+            show_oscillations(data)
+
+        with st.expander('Indicadores de Valuation', expanded=True):
+            show_valuation_indicators(data)
+
+        with st.expander('Indicadores de Rentabilidade', expanded=True):
+            show_profitability_indicators(data)
+
+        with st.expander('Indicadores de Endividamento', expanded=True):
+            show_indebtedness_indicators(data)
+
+        with st.expander('Balanço Patrimonial', expanded=True):
+            show_balance_sheet(data)
+
+        with st.expander('Demonstrativo de Resultados', expanded=True):
+            show_income_statement(data)
