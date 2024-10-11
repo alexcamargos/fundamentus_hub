@@ -2,7 +2,7 @@
 # encoding: utf-8
 #
 #  ------------------------------------------------------------------------------
-#  Name: handler.py
+#  Name: __init__.py
 #  Version: 0.0.1
 #  Summary: Fundamentus Hub
 #           Este projeto cria um dashboard utilizando a API pyfundamentus para
