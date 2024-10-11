@@ -2,7 +2,7 @@
 # encoding: utf-8
 #
 #  ------------------------------------------------------------------------------
-#  Name: indicator.py
+#  Name: indicator_metrics.py
 #  Version: 0.0.1
 #  Summary: Fundamentus Hub
 #           Este projeto cria um dashboard utilizando a API pyfundamentus para
@@ -20,8 +20,8 @@ import pandas as pd
 import streamlit as st
 
 from fundamentus_hub.downloader.requester import SGSRequester
-from fundamentus_hub.utilities.configuration import \
-    SGSAPIConfiguration as SGSCfg
+from fundamentus_hub.utilities.configuration import SGSAPIConfiguration as SGSCfg
+from fundamentus_hub.utilities.humanizer import format_metrics_value
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -29,29 +29,6 @@ def extract_sgs_value(data) -> pd.DataFrame:
     """Extract data from the SGS API and return the last value."""
 
     return pd.DataFrame(data).set_index('data')
-
-
-def format_value(raw_value: float, output_format: str) -> str:
-    """Format the value according to the output format.
-
-    Arguments:
-        raw_value (float) -- The raw value to be formatted.
-        output_format (str) -- The output format.
-
-    Returns:
-        The formatted value.
-    """
-
-    if output_format == 'percent_aa':
-        return f'{raw_value:.2f}% a.a.'
-
-    if output_format == 'percent_am':
-        return f'{raw_value:.2f}% a.m.'
-
-    if output_format == 'currency':
-        return f'R${raw_value:,.2f}'
-
-    return f'{raw_value:.2f}'
 
 
 def create_indicator_metrics():
@@ -78,9 +55,9 @@ def create_indicator_metrics():
         for index, indicator in enumerate(indicators):
             response = extract_sgs_value(requester.make_request(indicator.value['url']))
             raw_value = float(response['valor'].iloc[-1])  # pylint: disable=unsubscriptable-object
-            formatted_value = format_value(raw_value,
-                                           indicator.value.get('output_format',
-                                                               'default'))
+            formatted_value = format_metrics_value(raw_value,
+                                                   indicator.value.get('output_format',
+                                                                       'default'))
 
             with columns[index]:
                 st.metric(value=formatted_value,
