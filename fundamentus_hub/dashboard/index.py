@@ -25,9 +25,10 @@ import streamlit as st
 
 from fundamentus_hub.dashboard.widgets.indicator_metrics import create_indicator_metrics
 from fundamentus_hub.dashboard.widgets.stock_indicators import (
-    show_balance_sheet, show_income_statement, show_indebtedness_indicators,
+    show_balance_sheet, show_income_statement_three_months,
+    show_income_statement_twelve_months, show_indebtedness_indicators,
     show_market_indicators, show_oscillations, show_profitability_indicators,
-    show_valuation_indicators)
+    show_stock_price, show_valuation_indicators)
 from fundamentus_hub.utilities.configuration import DownloadHandler as DownloadCfg
 
 
@@ -57,16 +58,19 @@ def load_and_filter_portfolio(_portfolio: list) -> pd.DataFrame:
 def dasboard_index(portfolio: list) -> None:
     """Dashboard index page."""
 
-    with st.container():
-        create_indicator_metrics()
+    # with st.container():
+    #     create_indicator_metrics()
 
     with st.spinner('Carregando dados...'):
         oldest_df, youngest_df = load_and_filter_portfolio(portfolio)
 
     data = youngest_df.iloc[0]
 
-    with st.container():
+    with st.container(border=True):
         st.subheader(f'{data["Código"]} - {data["Empresa"]}')
+
+        with st.container(border=True):
+            show_stock_price(data)
 
         with st.expander('Indicadores de Mercado', expanded=True):
             show_market_indicators(data)
@@ -86,5 +90,8 @@ def dasboard_index(portfolio: list) -> None:
         with st.expander('Balanço Patrimonial', expanded=True):
             show_balance_sheet(data)
 
-        with st.expander('Demonstrativo de Resultados', expanded=True):
-            show_income_statement(data)
+        with st.expander('Demonstrativo de Resultados Últimos 12 meses', expanded=True):
+            show_income_statement_twelve_months(data)
+
+        with st.expander('Demonstrativo de Resultados Últimos 3 meses', expanded=True):
+            show_income_statement_three_months(data)
