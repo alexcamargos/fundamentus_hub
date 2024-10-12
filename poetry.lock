@@ -774,13 +774,13 @@ jupyter = ["ipykernel (>=5.1.2)", "ipython (>=5.8.0)", "ipywidgets (>=7,<8)", "t
 
 [[package]]
 name = "pyfundamentus"
-version = "0.0.11"
+version = "0.0.12"
 description = "Python Fundamentus is a Python API that allows you to quickly access the main fundamental indicators of the main stocks in the Brazilian market."
 optional = false
 python-versions = "<4.0,>=3.7"
 files = [
-    {file = "pyfundamentus-0.0.11-py3-none-any.whl", hash = "sha256:75c3b250bdfb908c8e80a0fc10cc208fd84aa7a63f1df26a5f35ceb894d2d1bc"},
-    {file = "pyfundamentus-0.0.11.tar.gz", hash = "sha256:3b430b69f0117a2d7406be815c24114c4352eb2cd4ff6b10ad5d157ea8954e50"},
+    {file = "pyfundamentus-0.0.12-py3-none-any.whl", hash = "sha256:85c22c93ba1d2577c6874172bae874e0c7dd7d54530d038c84d39f4d96603b2d"},
+    {file = "pyfundamentus-0.0.12.tar.gz", hash = "sha256:4175b4e3fcff43ed1efdb7a3c7f35730a81008e28345565861ed7ff2af61e259"},
 ]
 
 [package.dependencies]
@@ -1249,4 +1249,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "118649d632746937c2c48ac14a5e7abbdac50777c3046f72ca704980f70a8bf3"
+content-hash = "e7e83481656c391ae237b10e918cc50b71984ee42d94abba5f19987f8c86f0fd"
