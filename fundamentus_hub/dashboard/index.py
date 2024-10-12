@@ -64,34 +64,39 @@ def dasboard_index(portfolio: list) -> None:
     with st.spinner('Carregando dados...'):
         oldest_df, youngest_df = load_and_filter_portfolio(portfolio)
 
-    data = youngest_df.iloc[0]
+    tabs = st.tabs(portfolio)
 
-    with st.container(border=True):
-        st.subheader(f'{data["Código"]} - {data["Empresa"]}')
+    for tab_index, code in enumerate(portfolio):
+        with tabs[tab_index]:
+            # Filtra os dados da ação correspondente
+            data = youngest_df[youngest_df["Código"] == code].iloc[0]
 
-        with st.container(border=True):
-            show_stock_price(data)
+            with st.container(border=True):
+                st.subheader(f'{data["Código"]} - {data["Empresa"]}')
 
-        with st.expander('Indicadores de Mercado', expanded=True):
-            show_market_indicators(data)
+                with st.container(border=True):
+                    show_stock_price(data)
 
-        with st.expander('Oscilações', expanded=True):
-            show_oscillations(data)
+                with st.expander('Indicadores de Mercado', expanded=True):
+                    show_market_indicators(data)
 
-        with st.expander('Indicadores de Valuation', expanded=True):
-            show_valuation_indicators(data)
+                with st.expander('Oscilações', expanded=True):
+                    show_oscillations(data)
 
-        with st.expander('Indicadores de Rentabilidade', expanded=True):
-            show_profitability_indicators(data)
+                with st.expander('Indicadores de Valuation', expanded=True):
+                    show_valuation_indicators(data)
 
-        with st.expander('Indicadores de Endividamento', expanded=True):
-            show_indebtedness_indicators(data)
+                with st.expander('Indicadores de Rentabilidade', expanded=True):
+                    show_profitability_indicators(data)
 
-        with st.expander('Balanço Patrimonial', expanded=True):
-            show_balance_sheet(data)
+                with st.expander('Indicadores de Endividamento', expanded=True):
+                    show_indebtedness_indicators(data)
 
-        with st.expander('Demonstrativo de Resultados Últimos 12 meses', expanded=True):
-            show_income_statement_twelve_months(data)
+                with st.expander('Balanço Patrimonial', expanded=True):
+                    show_balance_sheet(data)
 
-        with st.expander('Demonstrativo de Resultados Últimos 3 meses', expanded=True):
-            show_income_statement_three_months(data)
+                with st.expander('Demonstrativo de Resultados Últimos 12 meses', expanded=True):
+                    show_income_statement_twelve_months(data)
+
+                with st.expander('Demonstrativo de Resultados Últimos 3 meses', expanded=True):
+                    show_income_statement_three_months(data)
