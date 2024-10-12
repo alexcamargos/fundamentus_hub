@@ -21,6 +21,7 @@ from typing import List
 import pandas as pd
 import streamlit as st
 
+from fundamentus_hub.dashboard.widgets.help_texts import HELP_TEXTS
 from fundamentus_hub.utilities.humanizer import format_value
 
 
@@ -47,6 +48,16 @@ def create_metric_columns(indicators: list, columns_per_row: int = 6) -> None:
                     st.metric(label=indicator["label"],
                               value=indicator["value"],
                               help=indicator.get("help", ""))
+
+
+def show_stock_price(data: pd.Series) -> None:
+    """Displays stock price."""
+
+    st.metric(label='Cotação',
+              value=format_value(data['Cotação'], is_monetary=True),
+              help=HELP_TEXTS.get('Cotação'))
+
+    st.write(f'**Última cotação**: {data["Última cotação"]}')
 
 
 def show_market_indicators(data: pd.Series) -> None:
@@ -101,34 +112,34 @@ def show_valuation_indicators(data: pd.Series) -> None:
     valuation_indicators = [
         {'label': 'P/L',
          'value': format_value(data["P/L"]),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('P/L')},
         {'label': 'P/VP',
          'value': format_value(data["P/VP"]),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('P/VP')},
         {'label': 'P/EBIT',
          'value': format_value(data["P/EBIT"]),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('P/EBIT')},
         {'label': 'PSR',
          'value': format_value(data["PSR"]),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('PSR')},
         {'label': 'Preço/Ativos',
          'value': format_value(data["Preço/Ativos"]),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Preço/Ativos')},
         {'label': 'Preço/Ativ circ liq',
          'value': format_value(data["Preço/Ativ circ liq"]),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Preço/Ativ circ liq')},
         {'label': 'Dividend Yield',
          'value': format_value(data["Dividend Yield"], is_percentage=True),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Dividend Yield')},
         {'label': 'EV/EBITDA',
          'value': format_value(data["EV/EBITDA"]),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('EV/EBITDA')},
         {'label': 'EV/EBIT',
          'value': format_value(data["EV/EBIT"]),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('EV/EBIT')},
         {'label': 'Preço/Capital de giro',
          'value': format_value(data["Preço/Capital de giro"]),
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Preço/Capital de giro')},
     ]
 
     create_metric_columns(valuation_indicators, columns_per_row=5)
@@ -140,28 +151,28 @@ def show_profitability_indicators(data: pd.Series) -> None:
     profitability_indicators = [
         {'label': 'ROE',
          'value': f'{format_value(data["ROE"], is_percentage=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('ROE')},
         {'label': 'ROIC',
          'value': f'{format_value(data["ROIC"], is_percentage=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('ROIC')},
         {'label': 'EBIT/Ativo',
          'value': f'{format_value(data["EBIT/Ativo"])}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('EBIT/Ativo')},
         {'label': 'Crescimento receita',
          'value': f'{format_value(data["Crescimento receita"], is_percentage=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Crescimento receita')},
         {'label': 'Giro ativos',
          'value': f'{format_value(data["Giro ativos"])}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Giro ativos')},
         {'label': 'Margem bruta',
          'value': f'{format_value(data["Margem bruta"], is_percentage=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Margem bruta')},
         {'label': 'Margem EBIT',
          'value': f'{format_value(data["Margem EBIT"], is_percentage=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Margem EBIT')},
         {'label': 'Margem líquida',
          'value': f'{format_value(data["Margem líquida"], is_percentage=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Margem líquida')},
     ]
 
     create_metric_columns(profitability_indicators, columns_per_row=4)
@@ -172,20 +183,20 @@ def show_indebtedness_indicators(data: pd.Series) -> None:
 
     indebtedness_indicators = [
         {'label': 'Liquidez corrente',
-         'value': f'R$ {data["Liquidez corrente"]:,.2f}',
-         'help': 'Help text in future'},
+         'value': f'{format_value(data["Liquidez corrente"])}',
+         'help': HELP_TEXTS.get('Liquidez corrente')},
         {'label': 'Dívida bruta/Patrim',
-         'value': f'R$ {data["Dívida bruta/Patrim"]:,.2f}',
-         'help': 'Help text in future'},
+         'value': f'{format_value(data["Dívida bruta/Patrim"])}',
+         'help': HELP_TEXTS.get('Dívida bruta/Patrim')},
         {'label': 'Dívida líquida/Patrim',
-         'value': f'R$ {data["Dívida líquida/Patrim"]:,.2f}',
-         'help': 'Help text in future'},
+         'value': f'{format_value(data["Dívida líquida/Patrim"])}',
+         'help': HELP_TEXTS.get('Dívida líquida/Patrim')},
         {'label': 'Dívida líquida/EBITDA',
-         'value': f'R$ {data["Dívida líquida/EBITDA"]:,.2f}',
-         'help': 'Help text in future'},
+         'value': f'{format_value(data["Dívida líquida/EBITDA"])}',
+         'help': HELP_TEXTS.get('Dívida líquida/EBITDA')},
         {'label': 'PL/Ativos',
-         'value': f'R$ {data["PL/Ativos"]:,.2f}',
-         'help': 'Help text in future'},
+         'value': f'{format_value(data["PL/Ativos"])}',
+         'help': HELP_TEXTS.get('PL/Ativos')},
     ]
 
     create_metric_columns(indebtedness_indicators)
@@ -197,40 +208,60 @@ def show_balance_sheet(data: pd.Series) -> None:
     balance_sheet = [
         {'label': 'Ativo',
          'value': f'{format_value(data["Ativo"], is_monetary=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Ativo')},
         {'label': 'Ativo circulante',
          'value': f'{format_value(data["Ativo circulante"], is_monetary=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Ativo circulante')},
         {'label': 'Disponibilidades',
          'value': f'{format_value(data["Disponibilidades"], is_monetary=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Disponibilidades')},
         {'label': 'Dívida bruta',
          'value': f'{format_value(data["Dívida bruta"], is_monetary=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Dívida bruta')},
         {'label': 'Dívida líquida',
          'value': f'{format_value(data["Dívida líquida"], is_monetary=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Dívida líquida')},
         {'label': 'Patrimônio líquido',
          'value': f'{format_value(data["Patrimônio líquido"], is_monetary=True)}',
-         'help': 'Help text in future'},
+         'help': HELP_TEXTS.get('Patrimônio líquido')},
     ]
 
     create_metric_columns(balance_sheet, columns_per_row=3)
 
 
-def show_income_statement(data: pd.Series) -> None:
+def show_income_statement_three_months(data: pd.Series) -> None:
     """Displays income statement indicators."""
 
     income_statement = [
         {'label': 'Receita líquida',
-         'value': f'{format_value(data["Receita líquida"], is_monetary=True)}',
-         'help': 'Help text in future'},
+         'value': f'{format_value(data["Receita líquida_three_months"], is_monetary=True)}',
+         'help': HELP_TEXTS.get('Receita líquida')},
         {'label': 'EBIT',
-         'value': f'{format_value(data["EBIT"], is_monetary=True)}',
-         'help': 'Help text in future'},
+         'value': f'{format_value(data["EBIT_three_months"], is_monetary=True)}',
+         'help': HELP_TEXTS.get('EBIT')},
         {'label': 'Lucro líquido',
-         'value': f'{format_value(data["Lucro líquido"], is_monetary=True)}',
-         'help': 'Help text in future'},
+         'value': f'{format_value(data["Lucro líquido_three_months"], is_monetary=True)}',
+         'help': HELP_TEXTS.get('Lucro líquido')},
+    ]
+
+    # Receita líquida_twelve_months;EBIT_twelve_months;Lucro líquido_twelve_months
+
+    create_metric_columns(income_statement)
+
+
+def show_income_statement_twelve_months(data: pd.Series) -> None:
+    """Displays income statement indicators."""
+
+    income_statement = [
+        {'label': 'Receita líquida',
+         'value': f'{format_value(data["Receita líquida_twelve_months"], is_monetary=True)}',
+         'help': HELP_TEXTS.get('Receita líquida')},
+        {'label': 'EBIT',
+         'value': f'{format_value(data["EBIT_twelve_months"], is_monetary=True)}',
+         'help': HELP_TEXTS.get('EBIT')},
+        {'label': 'Lucro líquido',
+         'value': f'{format_value(data["Lucro líquido_twelve_months"], is_monetary=True)}',
+         'help': HELP_TEXTS.get('Lucro líquido')},
     ]
 
     create_metric_columns(income_statement)
