@@ -84,10 +84,10 @@ class DataProcessor(DataProcessorInterface):
         data = {}
 
         # Access the fields of data_section.
-        for item in data_section.values():
+        for section_name, item in data_section.items():
             if isinstance(item, dict):
                 for sub_item in item.values():
-                    data[sub_item.title] = sub_item.value
+                    data[f'{sub_item.title}_{section_name}'] = sub_item.value
             else:
                 data[item.title] = item.value
 
