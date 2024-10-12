@@ -34,7 +34,7 @@ def dasboard_footer():
         </style>
 
         <div class="footer">
-            Criado com ❤️ usando Streamlit. © 2022 -
+            Criado com ❤️ usando Streamlit. © 2024 -
             <a href="https://github.com/alexcamargos" target="_blank">
                 Alexsander Lopes Camargos
             </a>
